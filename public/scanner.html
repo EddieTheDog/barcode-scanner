@@ -1,22 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Scanner</title>
+  <meta charset="UTF-8">
+  <title>Phone Barcode Scanner</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 20px; }
+    video { width: 100%; max-width: 400px; border: 1px solid #ccc; }
+  </style>
 </head>
 <body>
-  <h1>Phone Scanner</h1>
-  <input id="barcode" placeholder="Enter barcode manually">
-  <button onclick="sendBarcode()">Send</button>
+  <h1>Phone Barcode Scanner</h1>
+  <video id="video" autoplay></video>
+  <p id="result">Scanning...</p>
 
-  <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
 
-    function sendBarcode() {
-      const barcode = document.getElementById('barcode').value;
-      socket.emit('scan', barcode);
-      document.getElementById('barcode').value = '';
-    }
+    const codeReader = new ZXing.BrowserBarcodeReader();
+    const videoElement = document.getElementById('video');
+    const resultEl = document.getElementById('result');
+
+    codeReader
+      .decodeFromVideoDevice(null, videoElement, (result, err) => {
+        if (result) {
+          const barcode = result.text;
+          resultEl.textContent = 'Scanned: ' + barcode;
+          socket.emit('barcode-scanned', barcode);
+        }
+        if (err && !(err instanceof ZXing.NotFoundException)) {
+          console.error(err);
+        }
+      });
   </script>
 </body>
 </html>
