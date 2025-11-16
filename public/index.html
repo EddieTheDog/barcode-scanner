@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+</head>
+<body>
+  <h1>Barcode Dashboard</h1>
+  <ul id="barcodes"></ul>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    socket.on('barcodeData', data => {
+      const list = document.getElementById('barcodes');
+      const li = document.createElement('li');
+      li.textContent = data.join(' | ');
+      list.appendChild(li);
+    });
+  </script>
+</body>
+</html>
