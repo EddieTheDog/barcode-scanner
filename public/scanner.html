@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Scanner</title>
+</head>
+<body>
+  <h1>Phone Scanner</h1>
+  <input id="barcode" placeholder="Enter barcode manually">
+  <button onclick="sendBarcode()">Send</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    function sendBarcode() {
+      const barcode = document.getElementById('barcode').value;
+      socket.emit('scan', barcode);
+      document.getElementById('barcode').value = '';
+    }
+  </script>
+</body>
+</html>
